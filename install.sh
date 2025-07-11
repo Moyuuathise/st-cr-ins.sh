@@ -79,10 +79,29 @@ install_clewdr() {
 install_st() {
     local repo="https://github.com/SillyTavern/SillyTavern"
     use_proxy && repo="$PROXY/$repo"
-    [ -d "$ST_DIR/.git" ] && (cd "$ST_DIR"; git pull) || git clone --depth 1 --branch staging "$repo" "$ST_DIR"
-    (cd "$ST_DIR"; npm install) || err "npm依赖安装失败"
-    echo "SillyTavern安装完成"
+    local branch="release"
+    local selection
+    echo -e "${CYAN}请选择要安装/更新的分支：${NC}"
+    echo -e "${GREEN}1)${NC} release"
+    echo -e "${GREEN}2)${NC} staging"
+    read -rp "请输入选项（默认为1）：" selection
+    case "$selection" in
+        2)
+            branch="staging"
+            ;;
+        *)
+            branch="release"
+            ;;
+    esac
+    if [ -d "$ST_DIR/.git" ]; then
+        (cd "$ST_DIR" && git fetch origin "$branch" && git checkout "$branch" && git pull) || err "更新失败"
+    else
+        git clone --branch "$branch" "$repo" "$ST_DIR" || err "克隆失败"
+        (cd "$ST_DIR" && npm install) || err "npm依赖安装失败"
+    fi
+    echo "SillyTavern已安装/更新完成，当前分支为：$branch"
 }
+
 
 edit_config() {
     [ -f "$CONFIG" ] || "$CLEWDR_DIR/clewdr" && sleep 2
