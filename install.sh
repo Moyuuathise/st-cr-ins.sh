@@ -97,7 +97,7 @@ install_st() {
         (cd "$ST_DIR" && git fetch origin "$branch" && git checkout "$branch" && git pull) || err "更新失败"
     else
         git clone --branch "$branch" "$repo" "$ST_DIR" || err "克隆失败"
-        (cd "$ST_DIR" && npm install) || err "npm依赖安装失败"
+        (cd "$ST_DIR" && npm ci) || err "npm依赖安装失败"
     fi
     echo "SillyTavern已安装/更新完成，当前分支为：$branch"
 }
