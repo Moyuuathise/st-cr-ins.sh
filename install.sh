@@ -82,9 +82,9 @@ install_st() {
     local branch="release"
     local selection
     echo -e "${CYAN}请选择要安装/更新的分支：${NC}"
-    echo -e "${GREEN}1)${NC} release分支（稳定版）"
-    echo -e "${GREEN}2)${NC} staging分支（测试版）"
-    read -rp "请输入选项（默认为1）：" selection
+    echo -e "${GREEN}1)${NC} release"
+    echo -e "${GREEN}2)${NC} staging"
+    read -rp "请输入选项：" selection
     case "$selection" in
         2)
             branch="staging"
