@@ -211,7 +211,8 @@ main_menu() {
             5) set_port;;
             6) create_service;;
             7) check_deps; install_st;;
-            8) (cd "$ST_DIR"; node server.js);;
+            8) (cd "$ST_DIR"; node --max-old-space-size=4096 "server.js"
+server.js);;
             9) install_filebrowser;;
             10) start_filebrowser;;
             0) exit;;
