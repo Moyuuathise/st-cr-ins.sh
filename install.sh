@@ -352,22 +352,36 @@ install_clewdr() {
 # 安装 SillyTavern
 install_st() {
     local target_repo_url="https://github.com/SillyTavern/SillyTavern"
+    [ "$USE_PROXY" = true ] && [ -n "$CURRENT_PROXY" ] && target_repo_url="${CURRENT_PROXY}/${target_repo_url}"
 
-    if [ "$USE_PROXY" = true ] && [ -n "$CURRENT_PROXY" ]; then
-        target_repo_url="${CURRENT_PROXY}/${target_repo_url}"
+    # ── 只让用户选 release 或 staging ──
+    local ST_BRANCH="release"
+    if [ -t 0 ]; then
+        echo -e "\033[36m请选择要更新的分支：\033[0m"
+        select b in "release" "staging"; do
+            case $b in
+                release|staging) ST_BRANCH="$b"; break ;;
+                *) echo -e "\033[31m无效选项，请重新选择。\033[0m" ;;
+            esac
+        done
     fi
+    # ------------------------------------
 
     if [ -d "$ST_DIR/.git" ]; then
-        echo -e "\033[33m检测到 SillyTavern，已更新...\033[0m"
-        (cd "$ST_DIR" && git pull)
+        echo -e "\033[33m检测到 SillyTavern 已存在，正在切换到分支 $ST_BRANCH 并拉取最新代码...\033[0m"
+        (
+            cd "$ST_DIR"
+            git fetch origin
+            git checkout "$ST_BRANCH"
+            git pull origin "$ST_BRANCH"
+        )
     else
-        echo -e "\033[33m克隆 SillyTavern: $target_repo_url\033[0m"
-        git clone --depth 1 --branch release "$target_repo_url" "$ST_DIR"
+        echo -e "\033[33m正在克隆 SillyTavern 分支 $ST_BRANCH...\033[0m"
+        git clone --depth 1 --branch "$ST_BRANCH" "$target_repo_url" "$ST_DIR"
     fi
-    (cd "$ST_DIR" && npm install) || err "npm 依赖安装失败"
-    echo -e "\033[32mSillyTavern 安装完成\033[0m"
-    read -rsp $'\n按任意键返回主菜单...'
-    refresh_version_cache
+
+    (cd "$ST_DIR" && npm install) || err "npm依赖安装失败"
+    echo -e "\033[32mSillyTavern 安装/更新完成（分支：$ST_BRANCH）\033[0m"
 }
 
 # 安装 geminicli2api
