@@ -1,3 +1,5 @@
+> 此项目为旧版本，请勿下载或安装，请转到[ERALINK](https://github.com/404nyaFound/eralink)使用，感谢~
+
 # 「随行终端 ERALINK」
 > あなたのそばにへ
 
